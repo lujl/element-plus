@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Element Plus',
   description: '基于Element UI封装, 简化部分组件使用',
-  base: '/element-plus',
+  base: '/element-plus/',
   host: 'localhost',
   port: '9000',
   extraWatchFiles: [
