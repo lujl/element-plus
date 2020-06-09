@@ -129,3 +129,15 @@ sidebarDepth: 2
   
   <<< @/docs/.vuepress/components/select/allow-create.vue
 </example>
+
+
+## 配置选项
+指定选项的值、标签、子选项为选项对象的某个属性值。 具体见代码
+
+<example>
+  <template v-slot:demo>
+    <select-props></select-props>
+  </template>
+  
+  <<< @/docs/.vuepress/components/select/props.vue
+</example>
