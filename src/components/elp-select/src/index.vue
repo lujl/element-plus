@@ -1,12 +1,23 @@
 <template>
   <div class="elp-select">
     <el-select v-bind="$attrs" v-on="$listeners" v-model="value">
-      <template v-for="item in options">
+      <template v-for="item in optionsCopy">
+        <!-- 基本 -->
+        <el-option
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.disabled"
+          v-if="!item.options"
+          >
+          <slot v-bind="item"></slot>
+        </el-option>
+
         <!-- 分组 -->
         <el-option-group
           :key="item.label"
           :label="item.label"
-          v-if="isGroupOptions"
+          v-else
           >
           <el-option
             v-for="subItem in item.options"
@@ -16,17 +27,6 @@
             <slot v-bind="subItem"></slot>
           </el-option>
         </el-option-group>
-
-        <!-- 基本 -->
-        <el-option
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-          :disabled="item.disabled"
-          v-else
-          >
-          <slot v-bind="item"></slot>
-        </el-option>
       </template>
 
       <slot name="prefix"></slot>
@@ -35,6 +35,12 @@
   </div>
 </template>
 <script>
+const defaultProps = {
+  label: 'label',
+  value: 'value',
+  options: 'options'
+}
+
 export default {
   name: 'ElpSelect',
   model: {
@@ -48,16 +54,18 @@ export default {
       default: () => {
         return []
       }
+    },
+    props: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
     return {
+      optionsCopy: [],
       value: ''
-    }
-  },
-  computed: {
-    isGroupOptions: function () {
-      return this.options.some(item => item.options)
     }
   },
   watch: {
@@ -71,10 +79,33 @@ export default {
       handler (newVal) {
         this.$emit('change', newVal)
       }
+    },
+    options: {
+      immediate: true,
+      handler (newVal) {
+        if (this.props.label || this.props.value || this.props.options) {
+          const props = Object.assign({}, defaultProps, this.props)
+          this.optionsCopy = this.changeObjArrKeys(newVal, props)
+        } else {
+          this.optionsCopy = newVal
+        }
+      }
     }
   },
-  created () {
-    // console.log('slots', this.$slots)
+  methods: {
+    changeObjArrKeys (arr, props) {
+      return arr.map(item => {
+        const newObj = {}
+        Object.keys(props).forEach(key => {
+          if ((key === 'label' || key === 'value') && item[props[key]]) {
+            newObj[key] = item[props[key]]
+          } else if (key === 'options' && item[props[key]]) {
+            newObj[key] = this.changeObjArrKeys(item[props[key]], props)
+          }
+        })
+        return newObj
+      })
+    }
   }
 }
 </script>
