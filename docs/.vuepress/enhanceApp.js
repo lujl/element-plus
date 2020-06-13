@@ -2,6 +2,7 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElpSelect from '../../src/components/elp-select/index'
+import ElpRadio from '../../src/components/elp-radio/index'
 import example from './components/example/index'
 // 使用异步函数也是可以的
 export default ({
@@ -13,5 +14,6 @@ export default ({
 }) => {
   Vue.use(ElementUI)
   Vue.use(ElpSelect)
+  Vue.use(ElpRadio)
   Vue.component(example.name, example)
 }
